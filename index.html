@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F2F2EE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0F10" media="(prefers-color-scheme: dark)" />
+
+    <title>ARIQ - Har bir tomchi ildizgacha</title>
+    <meta
+      name="description"
+      content="ARIQ paxta va bogʻ xoʻjaliklariga tuproq sensorlari bilan boshqariladigan tomchilatib sugʻorish tarmogʻini oʻrnatadi. Suv sarfi 41% gacha kamayadi."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="uz_UZ" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:title" content="ARIQ - Har bir tomchi ildizgacha" />
+    <meta
+      property="og:description"
+      content="Oʻzbekiston dalalari uchun sensorli tomchilatib sugʻorish tarmogʻi."
+    />
+
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Resolve theme and language before the first paint. Doing this in a
+         React effect instead would show one frame of the wrong theme to
+         every visitor whose system prefers dark. -->
+    <script>
+      (function () {
+        var root = document.documentElement
+        var theme = 'light'
+        var lang = 'uz'
+        try {
+          var storedTheme = localStorage.getItem('ariq.theme')
+          theme =
+            storedTheme === 'light' || storedTheme === 'dark'
+              ? storedTheme
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          var storedLang = localStorage.getItem('ariq.locale')
+          if (storedLang === 'ru' || storedLang === 'en' || storedLang === 'uz')
+            lang = storedLang
+        } catch (e) {
+          /* private mode: fall through to the defaults above */
+        }
+        root.dataset.theme = theme
+        root.style.colorScheme = theme
+        root.lang = lang
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,256 @@
+@import 'tailwindcss';
+
+/* Variable fonts, self-hosted. Each ships unicode-range subsets, so the
+   Cyrillic files are only fetched when the Russian locale is active. */
+@import '@fontsource-variable/unbounded';
+@import '@fontsource-variable/onest';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* Manual theme switch. Falls back to the OS preference on first visit
+   (resolved in ThemeProvider, which always writes an explicit data-theme). */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ─────────────────────────────────────────────────────────────
+   ARIQ design tokens
+
+   Accent: one colour for the whole page. A deep Timurid teal, taken
+   from Samarqand tilework, which also reads as water. Never a second
+   accent: the comparison chart encodes "before" with neutrals only.
+
+   Radius rule, applied everywhere without exception:
+     surfaces, cards, inputs, images  ->  0
+     buttons, chips, toggles          ->  full pill
+   ───────────────────────────────────────────────────────────── */
+:root,
+[data-theme='light'] {
+  --bg: #f2f2ee;
+  --bg-sunk: #e7e8e2;
+  --surface: #fafaf7;
+  /* Three-step ink ramp. Every step clears WCAG AA against --bg at small
+     sizes, because --ink-faint carries 11-13px notes and eyebrows:
+     16.7:1 / 7.3:1 / 4.7:1 */
+  --ink: #0c1315;
+  --ink-soft: #46524f;
+  --ink-faint: #626e6a;
+  --line: color-mix(in oklab, #0c1315 14%, transparent);
+  --line-strong: color-mix(in oklab, #0c1315 28%, transparent);
+
+  --accent: #0c7f79; /* fills. 4.85:1 against white label text */
+  --accent-ink: #0a6058; /* accent used as text. 6.6:1 against --bg */
+  --accent-on: #ffffff; /* label colour on an accent fill */
+  --accent-wash: color-mix(in oklab, #0c7f79 10%, transparent);
+
+  /* Soil ramp for the descent. Both ramps stay inside their own theme's
+     value range, so --ink keeps at least 4.5:1 at every depth and the
+     section never reads as an inverted block mid-page. */
+  --soil-0: #ddd6c6;
+  --soil-1: #cdc3ac;
+  --soil-2: #b9ac90;
+  --soil-3: #a29578;
+  --soil-4: #8a7d64;
+
+  /* Semantic state colour, not a second brand accent. Only ever used for
+     form validation, and never as the sole signal: errors also carry an
+     icon and a message. 5.9:1 against --bg. */
+  --danger: #a33a26;
+
+  --grain-opacity: 0.035;
+  --shadow-lift: 0 1px 2px color-mix(in oklab, #0c1315 6%, transparent),
+    0 12px 32px -12px color-mix(in oklab, #0c1315 18%, transparent);
+}
+
+[data-theme='dark'] {
+  --bg: #0a0f10;
+  --bg-sunk: #060a0b;
+  --surface: #121a1c;
+  /* 16:1 / 7.8:1 / 5.5:1 against --bg. The faint step is set from the
+     lighter --surface, not --bg, since that is where it reads worst. */
+  --ink: #e6ebe9;
+  --ink-soft: #9aa8a5;
+  --ink-faint: #7e8c89;
+  --line: color-mix(in oklab, #e6ebe9 14%, transparent);
+  --line-strong: color-mix(in oklab, #e6ebe9 26%, transparent);
+
+  --accent: #2ed3c4; /* 10.1:1 against --bg */
+  --accent-ink: #2ed3c4;
+  --accent-on: #06201f; /* dark label on the bright accent fill */
+  --accent-wash: color-mix(in oklab, #2ed3c4 12%, transparent);
+
+  --soil-0: #1a1f20;
+  --soil-1: #22231d;
+  --soil-2: #2b2a21;
+  --soil-3: #343024;
+  --soil-4: #3d3627;
+
+  --danger: #ff8a6b; /* 8.2:1 against --bg */
+
+  --grain-opacity: 0.05;
+  --shadow-lift: 0 1px 2px color-mix(in oklab, #000 40%, transparent),
+    0 12px 32px -12px color-mix(in oklab, #000 60%, transparent);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-sunk: var(--bg-sunk);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-soft: var(--ink-soft);
+  --color-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-on: var(--accent-on);
+  --color-accent-wash: var(--accent-wash);
+  --color-danger: var(--danger);
+
+  --font-display: 'Unbounded Variable', 'Unbounded', ui-sans-serif, system-ui, sans-serif;
+  --font-text: 'Onest Variable', 'Onest', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --breakpoint-3xl: 1600px;
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-text);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  /* Lenis drives scroll position; without this the browser fights it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  select {
+    appearance: none;
+  }
+
+  input[type='range'] {
+    accent-color: var(--accent);
+    height: 1.5rem;
+    cursor: ew-resize;
+  }
+
+  /* A 24px rail is fine under a mouse and far too thin under a thumb. */
+  @media (pointer: coarse) {
+    input[type='range'] {
+      height: 2.75rem;
+    }
+  }
+
+  img {
+    background-color: var(--bg-sunk);
+  }
+}
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 4rem;
+    }
+  }
+
+  /* The one eyebrow style on the page. Used 3 times across 12 sections. */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* Tabular figures everywhere a number can change under the reader. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+}
+
+/* Line-by-line mask reveal. The clip lives on a child so the parent keeps
+   normal flow and the descenders in oʻ / gʻ / y are never sheared. */
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.reveal-line > span {
+  display: block;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-line > span {
+    transform: none !important;
+  }
+}
